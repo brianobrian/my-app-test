@@ -1,15 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-// return within render () distinguishes between things that React is going to 
-// alter on the DOM and things that are merely there to aid or make possible the
-// changes caused by render. So, you can get a bunch of function calls or var
-// decs, but return () won't return those, but the JSX or equivalent
-// This creates a component "called" with <Square /> where what's written after
-// Square and before the / is part of the props arguments passed by an
-// upper level component to a lower level one className= is just like class=
-// When debugging, ctrl F to find all mentions of the offenders because the 
-// error message may be misleading you as to the area where the problems lie
+
+/*return within render() distinguishes between things that React is going to 
+alter on the DOM and things that are merely there to aid or make possible the
+changes caused by render. So, you can use a bunch of function calls or var decs, 
+but return() won't return those, but only the JSX or equivalent. 
+
+Below creates a component "called" with <Square /> where what's written after
+<Square and before the / is everything props. When a parent component calls it,
+the parent passes arguments therein.
+className= is just like class=
+When debugging, ctrl F to find all mentions of the offenders because the error 
+message may be misdirection you
+*/
 function Square(props) {
 	return (
 		<button 
@@ -30,12 +34,7 @@ class Board extends React.Component {
 			/>
 		);
 	}
-/* The args to this.renderSquare never change. The early state of the app where
-the board was filled with the numbers and then replaice with X's and whatnot
-didn't imply some kind of change to the numbers below. Also, this returns not 
-just a board state from JSX, but also a bunch of event listeners. Every element
-of the HTML and JS needs to be rendered?
-*/
+
 	render() {
 	  return (
 			<div>
@@ -70,14 +69,14 @@ class Game extends React.Component {
 		 ],
 		 xIsNext: true,
 		 stepNumber: 0,
-	 };
+	  };
 	}
 
 	jumpTo(step) {
 		this.setState({
 			stepNumber: step,
 		  xIsNext: (step % 2) === 0,
-		})
+		});
 	}
 	
 	handleClick(i) {
@@ -96,11 +95,9 @@ class Game extends React.Component {
 			stepNumber: history.length,
 		});
 	}
-/* Within a component, how does React know when it's looking at JSX? Is it merely
-the presence of <>? 
-*/
+
 	render() {
-		const history = this.state.history;
+		const history = [...this.state.history];
 		const current = history[this.state.stepNumber];
 		const winner = detectWinner(current.squares);
 		const moves = history.map((step, move) => {
@@ -108,7 +105,7 @@ the presence of <>?
 				`Go to move # ${move}`:
 				`Go to game start`;
 			return (
-				<li>
+				<li key={move}>
 					<button onClick={() => this.jumpTo(move)}>{listElements}</button>
 				</li>
 			);
